@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 min-h-screen overflow-x-hidden select-none font-sans;
+    background: radial-gradient(ellipse at bottom, #0f172a 0%, #020617 100%);
+  }
+}
+
+/* Star Twinkle */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle var(--duration, 3s) infinite ease-in-out;
+}
+
+/* Floating animation for bottles */
+@keyframes floatBottle {
+  0%, 100% {
+    transform: translateY(0px) rotate(3deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(-3deg);
+  }
+}
+
+.animate-float {
+  animation: floatBottle 5s ease-in-out infinite;
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-1deg);
+  }
+}
+
+.animate-gentle {
+  animation: floatGentle 4s ease-in-out infinite;
+}
+
+/* Drift away animation */
+@keyframes driftAway {
+  0% {
+    transform: scale(1) translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.6) translateY(-80px) translateX(60px) rotate(15deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(0.1) translateY(-200px) translateX(150px) rotate(30deg);
+    opacity: 0;
+  }
+}
+
+.animate-drift-away {
+  animation: driftAway 2.2s forwards cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Drift in animation */
+@keyframes driftIn {
+  0% {
+    transform: scale(0.2) translateY(120px) translateX(-100px) rotate(-20deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05) translateY(-10px) translateX(10px) rotate(4deg);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(1) translateY(0) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-drift-in {
+  animation: driftIn 1.8s forwards cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Waves animation */
+@keyframes waveMotion {
+  0% {
+    transform: translateX(0) translateZ(0) scaleY(1);
+  }
+  50% {
+    transform: translateX(-25%) translateZ(0) scaleY(0.85);
+  }
+  100% {
+    transform: translateX(-50%) translateZ(0) scaleY(1);
+  }
+}
+
+.wave-layer-1 {
+  animation: waveMotion 12s linear infinite;
+}
+
+.wave-layer-2 {
+  animation: waveMotion 18s linear infinite reverse;
+}
+
+.wave-layer-3 {
+  animation: waveMotion 8s linear infinite;
+}
+
+/* Parchment Letter Paper Styling */
+.parchment {
+  background-color: #fcf8ee;
+  background-image: radial-gradient(#ece3cb 15%, transparent 16%), radial-gradient(#ece3cb 15%, transparent 16%);
+  background-size: 60px 60px;
+  background-position: 0 0, 30px 30px;
+  box-shadow: inset 0 0 40px rgba(139, 90, 43, 0.15), 0 10px 30px rgba(0, 0, 0, 0.5);
+  color: #3d2f21;
+}
+
+.parchment-border {
+  border: 1px solid #d4c29d;
+  box-shadow: 0 0 0 4px rgba(230, 218, 191, 0.4);
+}
+
+/* Glowing pulse for active bottle */
+@keyframes glowPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 28px rgba(56, 189, 248, 0.75));
+  }
+}
+
+.glow-bottle {
+  animation: glowPulse 3s infinite ease-in-out;
+}
