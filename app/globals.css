@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  background: #071521;
+  color: #f1f5f9;
+}
+
+@theme inline {
+  --font-sans: "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100%;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgb(21 89 117 / 28%), transparent 48%),
+    linear-gradient(180deg, #091b2a 0%, #071521 55%, #06121d 100%);
+  color: #f1f5f9;
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+}
+
+::selection {
+  background: rgb(103 232 249 / 30%);
+}
+
+.ocean-glow {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgb(37 130 158 / 18%), transparent 68%),
+    radial-gradient(ellipse at 82% 45%, rgb(30 87 125 / 11%), transparent 45%);
+}
+
+.brand-mark {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border: 1px solid rgb(165 243 252 / 30%);
+  border-radius: 50%;
+  color: rgb(207 250 254 / 90%);
+  font-size: 0.875rem;
+}
+
+.glass-panel {
+  border: 1px solid rgb(226 232 240 / 10%);
+  background: linear-gradient(
+    145deg,
+    rgb(26 51 68 / 75%),
+    rgb(13 31 46 / 82%)
+  );
+  box-shadow:
+    0 24px 80px rgb(0 0 0 / 18%),
+    inset 0 1px 0 rgb(255 255 255 / 4%);
+  backdrop-filter: blur(18px);
+}
+
+.bottle-icon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  border: 1px solid rgb(165 243 252 / 15%);
+  border-radius: 1rem;
+  background: rgb(103 232 249 / 6%);
+  color: rgb(165 243 252 / 78%);
+}
+
+.bottle-icon svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.message-input {
+  min-height: 9rem;
+}
+
+.send-button {
+  background: linear-gradient(110deg, #a5f3fc, #bae6fd 55%, #c4b5fd);
+  box-shadow: 0 8px 30px rgb(103 232 249 / 13%);
+}
