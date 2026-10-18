@@ -5,7 +5,7 @@
 ## 必要な設定
 
 1. Supabaseでプロジェクトを作成します。
-2. SupabaseのSQL Editorで [`supabase/migrations/20261011000000_create_messages.sql`](./supabase/migrations/20261011000000_create_messages.sql) の内容を実行します。
+2. SupabaseのSQL Editorで`supabase/migrations`内のマイグレーションをファイル名の昇順に実行します。
 3. SupabaseのProject URLと公開用anon/publishable keyを使って、プロジェクト直下に`.env.local`を作成します。[`.env.example`](./.env.example)をコピーして値を置き換えることもできます。
 
 ```dotenv
@@ -23,9 +23,11 @@ npm run dev
 ```
 
 ブラウザーで [http://localhost:3000](http://localhost:3000) を開きます。設定がない場合は投稿フォームに案内が表示されます。
+受信したメッセージのIDはブラウザーのlocalStorageに保存され、次回以降の受信候補から除外されます。
 
 ```bash
 npm run build
+npm test
 ```
 
 ## Vercelへデプロイ
@@ -42,6 +44,6 @@ npm run build
 
 公開URLで実際に投稿・受信するには、Production環境変数の設定とSupabaseマイグレーションの適用の両方が必要です。秘密の`service_role` keyは環境変数にも登録せず、ブラウザーに公開される`NEXT_PUBLIC_`変数には公開用キーのみを設定してください。
 
-## 匿名投稿について
+## 匿名投稿と既読管理について
 
-メッセージは公開読み取り可能で、ログインなしの公開投稿として保存されます。localStorageのUUIDは匿名利用者の区別に使いますが、本人確認にはならず、消去・変更できます。既読管理や投稿レート制限は含みません。
+メッセージは公開読み取り可能で、ログインなしの公開投稿として保存されます。localStorageのUUIDは匿名利用者の区別に使いますが、本人確認にはならず、消去・変更できます。受信済みメッセージのIDもlocalStorageで管理するため、ブラウザーのデータを消去すると既読状態がリセットされます。投稿レート制限はありません。

@@ -6,6 +6,7 @@ import type { FormEvent } from "react";
 import { getAnonymousUserId } from "@/lib/anonymous-user";
 import { createMessage, getRandomMessage } from "@/lib/messages";
 import type { ReceivedMessage } from "@/lib/messages";
+import { getReadMessageIds, markMessageAsRead } from "@/lib/read-messages";
 
 const isSupabaseConfigured = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -63,7 +64,12 @@ export default function Home() {
     setIsReceiving(true);
 
     try {
-      setReceivedMessage(await getRandomMessage(userId));
+      const readMessageIds = getReadMessageIds();
+      const message = await getRandomMessage(userId, readMessageIds);
+      if (message) {
+        markMessageAsRead(message.id);
+      }
+      setReceivedMessage(message);
     } catch (caughtError) {
       setReceiveError(
         `投稿は保存されましたが、受信メッセージを取得できませんでした。${errorMessage(caughtError)}`,
@@ -247,9 +253,7 @@ export default function Home() {
                   </blockquote>
                 ) : (
                   <p className="mt-5 text-sm leading-7 text-slate-300/70">
-                    まだ受け取れる手紙がありません。
-                    <br />
-                    誰かの言葉が海に流れてくるまで、少し待ってみてください。
+                    新しいメッセージが届くまでお待ちください
                   </p>
                 )}
               </div>

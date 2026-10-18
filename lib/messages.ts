@@ -26,9 +26,11 @@ export async function createMessage(
 
 export async function getRandomMessage(
   userId: string,
+  excludedMessageIds: string[],
 ): Promise<ReceivedMessage | null> {
   const { data, error } = await getSupabaseClient().rpc("get_random_message", {
     p_user_id: userId,
+    p_excluded_ids: excludedMessageIds,
   });
 
   if (error) {

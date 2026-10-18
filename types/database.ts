@@ -28,6 +28,7 @@ export type Database = {
       get_random_message: {
         Args: {
           p_user_id: string;
+          p_excluded_ids: string[];
         };
         Returns: Array<{
           id: string;
