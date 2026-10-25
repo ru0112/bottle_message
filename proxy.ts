@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isAuthSessionMissingError } from "@/lib/supabase/auth-errors";
 import { getSupabaseConfig, isSupabaseConfigured } from "@/lib/supabase/config";
 import type { Database } from "@/types/database";
 
@@ -31,7 +32,7 @@ export async function proxy(request: NextRequest) {
   });
 
   const { error } = await supabase.auth.getClaims();
-  if (error) {
+  if (error && !isAuthSessionMissingError(error)) {
     console.error("Supabase session refresh failed.", error.message);
   }
 

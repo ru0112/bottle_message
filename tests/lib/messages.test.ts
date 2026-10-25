@@ -53,6 +53,17 @@ describe("authenticated message operations", () => {
     expect(supabaseMocks.from).not.toHaveBeenCalled();
   });
 
+  it("treats a missing auth session as a login requirement", async () => {
+    const error = new Error("Auth session missing!");
+    error.name = "AuthSessionMissingError";
+    supabaseMocks.getUser.mockRejectedValue(error);
+
+    await expect(createMessage("hello")).rejects.toThrow(
+      "メッセージを流すにはログインが必要です。",
+    );
+    expect(supabaseMocks.from).not.toHaveBeenCalled();
+  });
+
   it("does not let callers supply an identity to random-message retrieval", async () => {
     const excludedIds = ["550e8400-e29b-41d4-a716-446655440001"];
 

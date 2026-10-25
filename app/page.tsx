@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Home from "./home";
+import { isAuthSessionMissingError } from "@/lib/supabase/auth-errors";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -23,14 +24,24 @@ export default function HomePage() {
 
 async function AuthenticatedHome() {
   const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  let isAuthenticated = false;
 
-  if (error) {
-    throw error;
+  try {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error && !isAuthSessionMissingError(error)) {
+      throw error;
+    }
+
+    isAuthenticated = Boolean(user);
+  } catch (error) {
+    if (!isAuthSessionMissingError(error)) {
+      throw error;
+    }
   }
 
-  return <Home isAuthenticated={Boolean(user)} supabaseConfigured />;
+  return <Home isAuthenticated={isAuthenticated} supabaseConfigured />;
 }

@@ -1,4 +1,5 @@
 import { getSupabaseClient } from "@/lib/supabase/client";
+import { isAuthSessionMissingError } from "@/lib/supabase/auth-errors";
 import type { Database } from "@/types/database";
 
 export type ReceivedMessage = Pick<
@@ -13,14 +14,26 @@ export async function createMessage(content: string): Promise<void> {
   }
 
   const supabase = getSupabaseClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
+  let user;
+  try {
+    const {
+      data: { user: authenticatedUser },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-  if (authError) {
-    throw new Error(authError.message);
+    if (authError && !isAuthSessionMissingError(authError)) {
+      throw authError;
+    }
+    user = authenticatedUser;
+  } catch (error) {
+    if (isAuthSessionMissingError(error)) {
+      throw new Error("メッセージを流すにはログインが必要です。");
+    }
+    throw new Error(
+      error instanceof Error ? error.message : "ユーザーを確認できませんでした。",
+    );
   }
+
   if (!user) {
     throw new Error("メッセージを流すにはログインが必要です。");
   }
