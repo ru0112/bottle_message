@@ -27,7 +27,6 @@ export type Database = {
     Functions: {
       get_random_message: {
         Args: {
-          p_user_id: string;
           p_excluded_ids: string[];
         };
         Returns: Array<{

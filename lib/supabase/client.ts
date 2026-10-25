@@ -1,20 +1,15 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { getSupabaseConfig } from "@/lib/supabase/config";
 import type { Database } from "@/types/database";
 
 let supabase: SupabaseClient<Database> | undefined;
 
 export function getSupabaseClient(): SupabaseClient<Database> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error(
-      "NEXT_PUBLIC_SUPABASE_URLとNEXT_PUBLIC_SUPABASE_ANON_KEYを設定してください。",
-    );
-  }
+  const { url, anonKey } = getSupabaseConfig();
 
   if (!supabase) {
-    supabase = createClient<Database>(supabaseUrl, supabaseKey);
+    supabase = createBrowserClient<Database>(url, anonKey);
   }
 
   return supabase;

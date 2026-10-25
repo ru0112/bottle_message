@@ -6,18 +6,28 @@ export type ReceivedMessage = Pick<
   "id" | "content" | "created_at"
 >;
 
-export async function createMessage(
-  content: string,
-  userId: string,
-): Promise<void> {
+export async function createMessage(content: string): Promise<void> {
   const trimmedContent = content.trim();
   if (!trimmedContent) {
     throw new Error("メッセージを入力してください。");
   }
 
-  const { error } = await getSupabaseClient()
+  const supabase = getSupabaseClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError) {
+    throw new Error(authError.message);
+  }
+  if (!user) {
+    throw new Error("メッセージを流すにはログインが必要です。");
+  }
+
+  const { error } = await supabase
     .from("messages")
-    .insert({ content: trimmedContent, user_id: userId });
+    .insert({ content: trimmedContent, user_id: user.id });
 
   if (error) {
     throw new Error(error.message);
@@ -25,11 +35,9 @@ export async function createMessage(
 }
 
 export async function getRandomMessage(
-  userId: string,
   excludedMessageIds: string[],
 ): Promise<ReceivedMessage | null> {
   const { data, error } = await getSupabaseClient().rpc("get_random_message", {
-    p_user_id: userId,
     p_excluded_ids: excludedMessageIds,
   });
 
