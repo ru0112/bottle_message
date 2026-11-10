@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { isAuthSessionMissingError } from "@/lib/supabase/auth-errors";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -29,6 +30,7 @@ export default function HistoryPage() {
 }
 
 async function HistoryContent() {
+  await connection();
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
