@@ -7,6 +7,12 @@ export type ReceivedMessage = Pick<
   "id" | "content" | "created_at"
 >;
 
+export type MessageThreadEntry =
+  Database["public"]["Functions"]["get_message_thread"]["Returns"][number];
+
+export type MessageHistoryItem =
+  Database["public"]["Functions"]["get_message_history"]["Returns"][number];
+
 export async function createMessage(content: string): Promise<void> {
   const trimmedContent = content.trim();
   if (!trimmedContent) {
@@ -48,7 +54,7 @@ export async function createMessage(content: string): Promise<void> {
 }
 
 export async function getRandomMessage(
-  excludedMessageIds: string[],
+  excludedMessageIds: string[] = [],
 ): Promise<ReceivedMessage | null> {
   const { data, error } = await getSupabaseClient().rpc("get_random_message", {
     p_excluded_ids: excludedMessageIds,
@@ -59,4 +65,54 @@ export async function getRandomMessage(
   }
 
   return data[0] ?? null;
+}
+
+export async function createMessageReply(
+  messageId: string,
+  content: string,
+): Promise<void> {
+  const trimmedContent = content.trim();
+  if (!trimmedContent) {
+    throw new Error("返信を入力してください。");
+  }
+
+  const { error } = await getSupabaseClient().rpc("create_message_reply", {
+    p_message_id: messageId,
+    p_content: trimmedContent,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function getMessageThread(
+  messageId: string,
+): Promise<MessageThreadEntry[]> {
+  const { data, error } = await getSupabaseClient().rpc("get_message_thread", {
+    p_message_id: messageId,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+}
+
+export async function getMessageHistory(
+  direction: "sent" | "received",
+): Promise<MessageHistoryItem[]> {
+  const { data, error } = await getSupabaseClient().rpc(
+    "get_message_history",
+    {
+      p_direction: direction,
+    },
+  );
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
 }

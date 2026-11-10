@@ -15,7 +15,12 @@ vi.mock("../../lib/supabase/client", () => ({
   }),
 }));
 
-import { createMessage, getRandomMessage } from "../../lib/messages";
+import {
+  createMessage,
+  createMessageReply,
+  getMessageHistory,
+  getRandomMessage,
+} from "../../lib/messages";
 
 const userId = "550e8400-e29b-41d4-a716-446655440000";
 
@@ -71,6 +76,37 @@ describe("authenticated message operations", () => {
 
     expect(supabaseMocks.rpc).toHaveBeenCalledWith("get_random_message", {
       p_excluded_ids: excludedIds,
+    });
+  });
+
+  it("creates replies through the database-validated RPC", async () => {
+    await createMessageReply(
+      "550e8400-e29b-41d4-a716-446655440002",
+      "  reply  ",
+    );
+
+    expect(supabaseMocks.rpc).toHaveBeenCalledWith("create_message_reply", {
+      p_message_id: "550e8400-e29b-41d4-a716-446655440002",
+      p_content: "reply",
+    });
+  });
+
+  it("surfaces database reply-rule errors", async () => {
+    supabaseMocks.rpc.mockResolvedValue({
+      data: null,
+      error: new Error("相手の返信を待ってから送信してください。"),
+    });
+
+    await expect(
+      createMessageReply("550e8400-e29b-41d4-a716-446655440002", "reply"),
+    ).rejects.toThrow("相手の返信を待ってから送信してください。");
+  });
+
+  it("requests only the signed-in user's selected history", async () => {
+    await getMessageHistory("received");
+
+    expect(supabaseMocks.rpc).toHaveBeenCalledWith("get_message_history", {
+      p_direction: "received",
     });
   });
 

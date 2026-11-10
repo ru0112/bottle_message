@@ -6,7 +6,6 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { createMessage, getRandomMessage } from "@/lib/messages";
 import type { ReceivedMessage } from "@/lib/messages";
-import { getReadMessageIds, markMessageAsRead } from "@/lib/read-messages";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
 type HomeProps = {
@@ -86,12 +85,7 @@ export default function Home({
     setIsReceiving(true);
 
     try {
-      const readMessageIds = getReadMessageIds();
-      const message = await getRandomMessage(readMessageIds);
-      if (message) {
-        markMessageAsRead(message.id);
-      }
-      setReceivedMessage(message);
+      setReceivedMessage(await getRandomMessage());
     } catch (caughtError) {
       setReceiveError(
         `投稿は保存されましたが、受信メッセージを取得できませんでした。${errorMessage(caughtError)}`,
@@ -124,6 +118,12 @@ export default function Home({
             </span>
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
+                <Link
+                  className="rounded-lg border border-cyan-100/20 px-3 py-2 text-xs text-cyan-50/90 transition hover:border-cyan-100/45"
+                  href="/history"
+                >
+                  履歴
+                </Link>
                 <span className="text-xs text-cyan-100/75">ログイン済み</span>
                 <button
                   type="button"
@@ -309,9 +309,17 @@ export default function Home({
                   A MESSAGE FOR YOU
                 </div>
                 {receivedMessage ? (
-                  <blockquote className="mt-5 whitespace-pre-wrap break-words text-base leading-8 text-white/90">
-                    {receivedMessage.content}
-                  </blockquote>
+                  <>
+                    <blockquote className="mt-5 whitespace-pre-wrap break-words text-base leading-8 text-white/90">
+                      {receivedMessage.content}
+                    </blockquote>
+                    <Link
+                      className="mt-5 inline-flex rounded-lg border border-cyan-100/20 px-4 py-2 text-sm text-cyan-50/90 transition hover:border-cyan-100/45"
+                      href={`/messages/${receivedMessage.id}`}
+                    >
+                      返信スレッドを開く
+                    </Link>
+                  </>
                 ) : (
                   <p className="mt-5 text-sm leading-7 text-slate-300/70">
                     新しいメッセージが届くまでお待ちください
