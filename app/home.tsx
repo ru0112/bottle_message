@@ -209,7 +209,7 @@ export default function Home({
                 className="message-input w-full resize-y rounded-2xl border border-white/10 bg-slate-950/35 p-4 text-sm leading-7 text-white outline-none transition placeholder:text-slate-400/45 focus:border-cyan-200/45 focus:ring-2 focus:ring-cyan-200/10 disabled:opacity-50"
               />
               <div className="mt-2 flex justify-between text-[11px] text-slate-300/45">
-                <span>個人を特定できる情報や、誰かを傷つける言葉は入力しないでください</span>
+                <span>個人情報や、誰かを傷つける言葉は入力しないでください</span>
                 <span>{content.length}字</span>
               </div>
 
@@ -310,7 +310,7 @@ export default function Home({
                       className="mt-5 inline-flex rounded-lg border border-cyan-100/20 px-4 py-2 text-sm text-cyan-50/90 transition hover:border-cyan-100/45"
                       href={`/messages/${receivedMessage.id}`}
                     >
-                      返信スレッドを開く
+                      返信する
                     </Link>
                   </>
                 ) : (

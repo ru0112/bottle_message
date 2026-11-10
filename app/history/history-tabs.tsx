@@ -51,7 +51,7 @@ export default function HistoryTabs({
               : "text-slate-300/60 hover:text-white"
           }`}
         >
-          受信したメッセージ
+          返信したメッセージ
         </button>
       </div>
 
