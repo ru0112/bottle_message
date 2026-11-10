@@ -1,53 +1,97 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { getSupabaseClient } from "@/lib/supabase/client";
+import { sendEmailOtp, verifyEmailOtp } from "@/lib/supabase/email-otp";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export default function LoginForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
+  const [step, setStep] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
+  const [token, setToken] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const configured = isSupabaseConfigured();
   const callbackFailed = searchParams.get("error") === "callback";
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const normalizedEmail = email.trim();
-    if (!normalizedEmail || isSending || !configured) {
+  useEffect(() => {
+    if (resendCooldown <= 0) {
       return;
     }
 
-    setStatus(null);
+    const timer = window.setTimeout(() => {
+      setResendCooldown((remaining) => Math.max(remaining - 1, 0));
+    }, 1000);
+
+    return () => window.clearTimeout(timer);
+  }, [resendCooldown]);
+
+  async function sendCode(isResend: boolean) {
+    if (!email.trim() || isSending || !configured) {
+      return;
+    }
+
     setError(null);
+    setStatus(null);
     setIsSending(true);
 
     try {
-      const { error: authError } = await getSupabaseClient().auth.signInWithOtp({
-        email: normalizedEmail,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (authError) {
-        throw authError;
-      }
-
-      setStatus("認証用のメールを送信しました。メール内のリンクからログインしてください。");
+      await sendEmailOtp(email.trim());
+      setToken("");
+      setStep("code");
+      setResendCooldown(30);
+      setStatus(
+        isResend
+          ? "新しい認証コードをメールで送信しました。"
+          : "6桁の認証コードをメールで送信しました。",
+      );
     } catch (caughtError) {
       setError(
         caughtError instanceof Error
           ? caughtError.message
-          : "認証メールを送信できませんでした。",
+          : "認証コードを送信できませんでした。",
       );
     } finally {
       setIsSending(false);
+    }
+  }
+
+  async function handleEmailSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await sendCode(false);
+  }
+
+  async function handleCodeSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const normalizedToken = token.trim();
+    if (!/^\d{6}$/.test(normalizedToken) || isVerifying || !configured) {
+      setError("メールに記載された6桁の認証コードを入力してください。");
+      return;
+    }
+
+    setError(null);
+    setStatus(null);
+    setIsVerifying(true);
+
+    try {
+      await verifyEmailOtp(email.trim(), normalizedToken);
+      router.replace("/");
+      router.refresh();
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? `認証コードが正しくないか、有効期限が切れています。${caughtError.message}`
+          : "認証コードが正しくないか、有効期限が切れています。もう一度お試しください。",
+      );
+    } finally {
+      setIsVerifying(false);
     }
   }
 
@@ -114,32 +158,103 @@ export default function LoginForm() {
             </p>
           )}
 
-          <form className="mt-6" onSubmit={handleSubmit}>
-            <label
-              className="mb-2 block text-sm text-slate-200/80"
-              htmlFor="email"
-            >
-              メールアドレス
-            </label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-              disabled={!configured || isSending}
-              className="w-full rounded-xl border border-white/10 bg-slate-950/35 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-400/45 focus:border-cyan-200/45 focus:ring-2 focus:ring-cyan-200/10 disabled:opacity-50"
-              placeholder="you@example.com"
-            />
-            <button
-              type="submit"
-              disabled={!configured || isSending || !email.trim()}
-              className="send-button mt-5 flex w-full items-center justify-center rounded-xl px-5 py-4 text-sm font-semibold tracking-[0.08em] text-slate-950 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-100 disabled:cursor-not-allowed disabled:opacity-45"
-            >
-              {isSending ? "送信しています..." : "認証メールを送信"}
-            </button>
-          </form>
+          {step === "email" ? (
+            <form className="mt-6" onSubmit={handleEmailSubmit}>
+              <label
+                className="mb-2 block text-sm text-slate-200/80"
+                htmlFor="email"
+              >
+                メールアドレス
+              </label>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+                disabled={!configured || isSending}
+                className="w-full rounded-xl border border-white/10 bg-slate-950/35 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-400/45 focus:border-cyan-200/45 focus:ring-2 focus:ring-cyan-200/10 disabled:opacity-50"
+                placeholder="you@example.com"
+              />
+              <button
+                type="submit"
+                disabled={!configured || isSending || !email.trim()}
+                className="send-button mt-5 flex w-full items-center justify-center rounded-xl px-5 py-4 text-sm font-semibold tracking-[0.08em] text-slate-950 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-100 disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                {isSending ? "送信しています..." : "6桁の認証コードを送信"}
+              </button>
+            </form>
+          ) : (
+            <form className="mt-6" onSubmit={handleCodeSubmit}>
+              <p className="text-sm leading-7 text-slate-200/80">
+                <span className="font-medium text-white">{email}</span>
+                に届いた6桁のコードを入力してください。
+              </p>
+              <label
+                className="mb-2 mt-5 block text-sm text-slate-200/80"
+                htmlFor="token"
+              >
+                認証コード
+              </label>
+              <input
+                id="token"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="[0-9]{6}"
+                maxLength={6}
+                value={token}
+                onChange={(event) =>
+                  setToken(event.target.value.replace(/\D/g, "").slice(0, 6))
+                }
+                required
+                disabled={!configured || isVerifying}
+                aria-describedby="otp-resend-status"
+                className="w-full rounded-xl border border-white/10 bg-slate-950/35 px-4 py-3 text-center text-xl tracking-[0.5em] text-white outline-none transition placeholder:text-slate-400/45 focus:border-cyan-200/45 focus:ring-2 focus:ring-cyan-200/10 disabled:opacity-50"
+                placeholder="000000"
+              />
+              <button
+                type="submit"
+                disabled={
+                  !configured || isVerifying || token.length !== 6
+                }
+                className="send-button mt-5 flex w-full items-center justify-center rounded-xl px-5 py-4 text-sm font-semibold tracking-[0.08em] text-slate-950 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-100 disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                {isVerifying ? "確認しています..." : "コードを確認してログイン"}
+              </button>
+              <div
+                id="otp-resend-status"
+                className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm"
+              >
+                <button
+                  type="button"
+                  onClick={() => void sendCode(true)}
+                  disabled={!configured || isSending || resendCooldown > 0}
+                  className="text-cyan-100/80 underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:text-slate-400/50"
+                >
+                  {isSending
+                    ? "再送信しています..."
+                    : resendCooldown > 0
+                      ? `コードを再送信 (${resendCooldown}秒)`
+                      : "コードを再送信"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStep("email");
+                    setToken("");
+                    setError(null);
+                    setStatus(null);
+                  }}
+                  disabled={isVerifying || isSending}
+                  className="text-slate-300/70 underline-offset-4 hover:text-white hover:underline disabled:opacity-50"
+                >
+                  メールアドレスを変更
+                </button>
+              </div>
+            </form>
+          )}
           <Link
             className="mt-6 inline-block text-sm text-cyan-100/75 underline-offset-4 hover:underline"
             href="/"

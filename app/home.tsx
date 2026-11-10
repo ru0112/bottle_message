@@ -147,19 +147,15 @@ export default function Home({
 
         <section className="mx-auto mt-16 grid w-full max-w-4xl gap-10 lg:mt-24 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-16">
           <div className="text-center lg:text-left">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-100/15 bg-cyan-100/[0.06] px-4 py-2 text-xs tracking-[0.12em] text-cyan-100/80">
-              <span className="h-1.5 w-1.5 rounded-full bg-cyan-200 shadow-[0_0_12px_2px_rgba(103,232,249,0.6)]" />
-              どこかの誰かへ
-            </div>
             <h1 className="text-4xl font-medium leading-[1.35] tracking-[0.08em] text-white sm:text-5xl">
               あなたの言葉を、
               <br />
               <span className="text-cyan-100">海へ。</span>
             </h1>
             <p className="mx-auto mt-6 max-w-md text-sm leading-8 text-slate-300/75 lg:mx-0">
-              何気ないことも、胸にしまっていたことも。
+              誰かに語りたいことも、何気ないことも、胸にしまっていたことも。
               <br className="hidden sm:block" />
-              瓶に詰めて流せば、思いがけない誰かに届くかもしれません。
+              瓶に詰めて流せば、誰かに届きます。
             </p>
             <div className="mt-9 hidden items-center gap-3 text-xs tracking-[0.08em] text-slate-300/45 lg:flex">
               <span aria-hidden="true">✦</span>
@@ -216,7 +212,7 @@ export default function Home({
                 className="message-input w-full resize-y rounded-2xl border border-white/10 bg-slate-950/35 p-4 text-sm leading-7 text-white outline-none transition placeholder:text-slate-400/45 focus:border-cyan-200/45 focus:ring-2 focus:ring-cyan-200/10 disabled:opacity-50"
               />
               <div className="mt-2 flex justify-between text-[11px] text-slate-300/45">
-                <span>あなたを特定する情報は表示されません</span>
+                <span>個人を特定できる情報や、誰かを傷つける言葉は入力しないでください。</span>
                 <span>{content.length}字</span>
               </div>
 
@@ -329,10 +325,6 @@ export default function Home({
             </div>
           )}
         </section>
-
-        <footer className="mt-auto pt-16 text-center text-[11px] tracking-[0.12em] text-slate-400/35">
-          <p>ひとつの言葉が、誰かの夜を照らしますように。</p>
-        </footer>
       </div>
     </main>
   );
