@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import Home from "./home";
 import { isAuthSessionMissingError } from "@/lib/supabase/auth-errors";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -23,6 +24,7 @@ export default function HomePage() {
 }
 
 async function AuthenticatedHome() {
+  await connection();
   const supabase = await createSupabaseServerClient();
   let isAuthenticated = false;
 
