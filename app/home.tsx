@@ -124,7 +124,6 @@ export default function Home({
                 >
                   履歴
                 </Link>
-                <span className="text-xs text-cyan-100/75">ログイン済み</span>
                 <button
                   type="button"
                   onClick={handleSignOut}
@@ -153,9 +152,7 @@ export default function Home({
               <span className="text-cyan-100">海へ。</span>
             </h1>
             <p className="mx-auto mt-6 max-w-md text-sm leading-8 text-slate-300/75 lg:mx-0">
-              誰かに語りたいことも、何気ないことも、胸にしまっていたことも。
-              <br className="hidden sm:block" />
-              瓶に詰めて流せば、誰かに届きます。
+              誰かに語りたいことや何気ないことを瓶に詰めて流せば、誰かに届きます。
             </p>
             <div className="mt-9 hidden items-center gap-3 text-xs tracking-[0.08em] text-slate-300/45 lg:flex">
               <span aria-hidden="true">✦</span>
@@ -212,7 +209,7 @@ export default function Home({
                 className="message-input w-full resize-y rounded-2xl border border-white/10 bg-slate-950/35 p-4 text-sm leading-7 text-white outline-none transition placeholder:text-slate-400/45 focus:border-cyan-200/45 focus:ring-2 focus:ring-cyan-200/10 disabled:opacity-50"
               />
               <div className="mt-2 flex justify-between text-[11px] text-slate-300/45">
-                <span>個人を特定できる情報や、誰かを傷つける言葉は入力しないでください。</span>
+                <span>個人を特定できる情報や、誰かを傷つける言葉は入力しないでください</span>
                 <span>{content.length}字</span>
               </div>
 
@@ -226,12 +223,12 @@ export default function Home({
               )}
               {supabaseConfigured && !isAuthenticated && (
                 <div className="mt-4 rounded-xl border border-cyan-100/15 bg-cyan-100/[0.04] px-4 py-3 text-sm leading-6 text-cyan-50/80">
-                  投稿と受信にはログインが必要です。{" "}
+                  投稿と受信には認証が必要です。{" "}
                   <Link
                     className="font-semibold text-cyan-100 underline underline-offset-4"
                     href="/login"
                   >
-                    ログインする
+                    認証する
                   </Link>
                 </div>
               )}

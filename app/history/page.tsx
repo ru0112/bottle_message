@@ -99,10 +99,10 @@ async function HistoryContent() {
             YOUR MESSAGE THREADS
           </p>
           <h1 className="mt-2 text-3xl font-medium tracking-wider text-white">
-            送受信履歴
+            履歴
           </h1>
           <p className="mt-3 text-sm leading-7 text-slate-300/70">
-            あなたが送った手紙と、受け取った手紙のスレッドです。
+            あなたが海に流した手紙と、返信した手紙のスレッドです。
           </p>
           <HistoryTabs sentMessages={sentMessages} receivedMessages={receivedMessages} />
         </section>

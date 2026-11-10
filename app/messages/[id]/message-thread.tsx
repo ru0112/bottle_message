@@ -67,7 +67,7 @@ export default function MessageThread({ entries }: MessageThreadProps) {
             className="text-sm text-cyan-100/75 underline-offset-4 hover:underline"
             href="/history"
           >
-            送受信履歴
+            履歴へ戻る
           </Link>
         </header>
 
