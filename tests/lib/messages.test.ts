@@ -102,6 +102,29 @@ describe("authenticated message operations", () => {
     ).rejects.toThrow("相手の返信を待ってから送信してください。");
   });
 
+  it("surfaces the conflict when another user claimed the first reply", async () => {
+    supabaseMocks.rpc.mockResolvedValue({
+      data: null,
+      error: new Error(
+        "このメッセージは既に他のユーザーとやり取りが始まりました",
+      ),
+    });
+
+    await expect(
+      createMessageReply("550e8400-e29b-41d4-a716-446655440002", "reply"),
+    ).rejects.toThrow(
+      "このメッセージは既に他のユーザーとやり取りが始まりました",
+    );
+  });
+
+  it("requests a fresh random message without client-side viewed exclusions", async () => {
+    await getRandomMessage();
+
+    expect(supabaseMocks.rpc).toHaveBeenCalledWith("get_random_message", {
+      p_excluded_ids: [],
+    });
+  });
+
   it("requests only the signed-in user's selected history", async () => {
     await getMessageHistory("received");
 

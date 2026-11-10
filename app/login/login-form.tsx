@@ -239,19 +239,6 @@ export default function LoginForm() {
                       ? `コードを再送信 (${resendCooldown}秒)`
                       : "コードを再送信"}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStep("email");
-                    setToken("");
-                    setError(null);
-                    setStatus(null);
-                  }}
-                  disabled={isVerifying || isSending}
-                  className="text-slate-300/70 underline-offset-4 hover:text-white hover:underline disabled:opacity-50"
-                >
-                  メールアドレスを変更
-                </button>
               </div>
             </form>
           )}
