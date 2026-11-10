@@ -56,7 +56,7 @@ async function HistoryContent() {
             className="send-button mt-6 inline-flex rounded-xl px-5 py-3 text-sm font-semibold text-slate-950"
             href="/login"
           >
-            ログイン
+            認証
           </Link>
         </section>
       </main>
@@ -96,14 +96,11 @@ async function HistoryContent() {
         </Link>
         <section className="mt-12">
           <p className="text-xs tracking-[0.18em] text-cyan-100/65">
-            YOUR MESSAGE THREADS
+            YOUR MESSAGE HISTORY
           </p>
           <h1 className="mt-2 text-3xl font-medium tracking-wider text-white">
             履歴
           </h1>
-          <p className="mt-3 text-sm leading-7 text-slate-300/70">
-            あなたが海に流した手紙と、返信した手紙のスレッドです。
-          </p>
           <HistoryTabs sentMessages={sentMessages} receivedMessages={receivedMessages} />
         </section>
       </div>

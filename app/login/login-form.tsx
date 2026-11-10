@@ -116,10 +116,10 @@ export default function LoginForm() {
 
         <section className="glass-panel mx-auto my-auto w-full max-w-md rounded-[1.75rem] p-6 sm:p-8">
           <p className="text-xs tracking-[0.18em] text-cyan-100/65">
-            SIGN IN OR CREATE ACCOUNT
+            CERTIFICATION BY EMAIL
           </p>
           <h1 className="mt-3 text-2xl font-medium tracking-wider text-white">
-            メールでログイン
+            メールで認証
           </h1>
           <p className="mt-3 text-sm leading-7 text-slate-300/75">
             メールアドレスは認証にのみ使用され、プロフィールや投稿に表示されません。
