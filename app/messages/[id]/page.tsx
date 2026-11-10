@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import type { MessageThreadEntry } from "@/lib/messages";
 import { isAuthSessionMissingError } from "@/lib/supabase/auth-errors";
@@ -44,7 +45,7 @@ async function MessageThreadContent({
   if (!UUID_PATTERN.test(id)) {
     notFound();
   }
-
+  await connection();
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
