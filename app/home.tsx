@@ -138,7 +138,7 @@ export default function Home({
                 className="rounded-lg border border-cyan-100/25 px-3 py-2 text-xs text-cyan-50/90 transition hover:border-cyan-100/50"
                 href="/login"
               >
-                ログイン
+                認証
               </Link>
             )}
           </div>
